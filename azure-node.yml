@@ -1,0 +1,53 @@
+# Install Node and run app in VMs (no exposed verified)
+- name: Install node, npm, acl
+  hosts: azure
+  tasks:
+  - name: Update apt
+    apt: update_cache=yes force_apt_get=yes cache_valid_time=3600
+  - name: Install node
+    apt:
+      pkg:
+        - nodejs
+        - npm
+  - name: Install acl
+    apt:
+      update_cache: yes
+      pkg:
+        - acl
+- name: Create user
+  hosts: azure
+  vars_files:
+   - ansible-vars
+  tasks:
+   - name: Create user
+     user:
+       name: "{{local_user}}"
+       comment: "{{local_user}} Admin"
+       group: admin       
+
+- name: Deploy app
+  hosts: azure
+  become: yes
+  become_user: "{{local_user}}" 
+  vars_files:
+    - ansible-vars
+  tasks:
+  - name: Unpack
+    unarchive:
+      #src: app.tgz
+      src: "{{ app_src }}"
+      dest: /home/{{local_user}}
+  - name: Npm i
+    npm:
+      path: /home/{{local_user}}/package
+  - name: Start
+    #command: node /root/package/app/server
+    command:
+      chdir: /home/{{local_user}}/package/app
+      cmd: node server
+    async: 1000
+    poll: 0  
+  - name: Ensure app is running
+    shell: ps aux | grep node
+    register: app_status
+  - debug: msg={{app_status}}

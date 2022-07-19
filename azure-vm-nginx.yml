@@ -1,0 +1,12 @@
+# Install NGINX in VMs
+- name: Configure nginx web server
+  hosts: azure
+  tasks:
+  - name: Install nginx
+    apt:
+      name: nginx
+      state: latest
+  - name: Start nginx
+    service:
+      name: nginx
+      state: started

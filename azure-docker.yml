@@ -1,6 +1,6 @@
 # Install Docker and run image in VMs
 - name: Install docker
-  hosts: azure
+  hosts: all
   become: yes
   gather_facts: False
   tasks:
@@ -26,7 +26,7 @@
     pip:
       name: docker-compose
 - name: Pull & Run image
-  hosts: azure
+  hosts: all
   become: yes
   gather_facts: False
   tasks:

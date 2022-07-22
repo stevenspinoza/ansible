@@ -1,0 +1,45 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: myapp-loadbalancer
+  labels: 
+    app: myapp
+spec:
+  type: LoadBalancer 
+  selector:
+    app: myapp
+  ports: 
+    - port: 80
+      targetPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: myapp-service
+spec:
+  selector:
+    app: myapp
+  ports:
+  - port: 8080
+    protocol: TCP
+    targetPort: 8080
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: myapp
+spec:
+  selector:
+    matchLabels:
+      app: myapp
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: myapp
+    spec:
+      containers:
+      - name: myapp
+        image: stevenspinoza/kub-first-app:argo91
+        ports:
+        - containerPort: 8080

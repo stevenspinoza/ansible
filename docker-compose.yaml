@@ -1,0 +1,8 @@
+version: '3'
+services:
+  kfa:
+    image: stevenspinoza/kub-first-app:argo91
+    network_mode: host
+    # ports:
+    # - 8080:8080
+    container_name: kfa
